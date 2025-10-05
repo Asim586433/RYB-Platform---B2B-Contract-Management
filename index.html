@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYB Platform | B2B Contract Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            transition: all 0.3s;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            list-style: none;
+            padding: 0 15px;
+        }
+        
+        .nav-links li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .nav-links i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .header h2 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        /* Dashboard Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+        
+        .users .stat-icon { background-color: rgba(67, 97, 238, 0.1); color: var(--primary); }
+        .contracts .stat-icon { background-color: rgba(76, 201, 240, 0.1); color: var(--success); }
+        .revenue .stat-icon { background-color: rgba(248, 149, 30, 0.1); color: var(--warning); }
+        .disputes .stat-icon { background-color: rgba(247, 37, 133, 0.1); color: var(--danger); }
+        
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h3 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        th {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status.active {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .status.pending {
+            background-color: rgba(248, 149, 30, 0.1);
+            color: var(--warning);
+        }
+        
+        .status.disputed {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+        }
+        
+        .status.completed {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .status.banned {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .delete-btn {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+        }
+        
+        .ban-btn {
+            background-color: rgba(248, 149, 30, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 500px;
+            max-width: 90%;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* AI Search Section */
+        .ai-search {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .ai-search h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-search h3 i {
+            margin-right: 10px;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px 0 0 6px;
+            font-size: 16px;
+        }
+        
+        .search-box button {
+            padding: 0 20px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .ai-result {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Report Button */
+        .report-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .nav-links li {
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+            
+            .nav-links a {
+                white-space: nowrap;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-info {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-handshake"></i>
+                <h1>RYB Platform</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-tab="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" data-tab="users"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" data-tab="contracts"><i class="fas fa-file-contract"></i> Contracts</a></li>
+                <li><a href="#" data-tab="payments"><i class="fas fa-money-bill-wave"></i> Payments</a></li>
+                <li><a href="#" data-tab="disputes"><i class="fas fa-balance-scale"></i> Disputes</a></li>
+                <li><a href="#" data-tab="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#" data-tab="settings"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 id="page-title">Admin Dashboard</h2>
+                <div class="user-info">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin User">
+                    <div>
+                        <h4>John Admin</h4>
+                        <p>Administrator</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <!-- AI Search Section -->
+                <div class="ai-search">
+                    <h3><i class="fas fa-robot"></i> AI-Powered Company Search</h3>
+                    <div class="search-box">
+                        <input type="text" id="ai-search-input" placeholder="Search for companies, contracts, or services...">
+                        <button id="ai-search-btn"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                    <div class="ai-result" id="ai-result">
+                        <p>Enter a search term to get AI-powered insights about companies on our platform.</p>
+                    </div>
+                </div>
+                
+                <!-- Stats Section -->
+                <div class="stats-container">
+                    <div class="stat-card users">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>1,247</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card contracts">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>543</h3>
+                            <p>Active Contracts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>$42,580</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card disputes">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Open Disputes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Contracts Section -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Recent Contracts</h3>
+                        <button class="btn btn-primary" id="add-contract-btn">
+                            <i class="fas fa-plus"></i> Add Contract
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Contract ID</th>
+                                    <th>Title</th>
+                                    <th>Parties</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contracts-table-body">
+                                <!-- Contracts will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- User Management Section -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <button class="btn btn-primary" id="add-user-btn">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Users will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Disputes Section -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Active Disputes</h3>
+                        <button class="btn btn-primary" id="add-dispute-btn">
+                            <i class="fas fa-plus"></i> New Dispute
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dispute ID</th>
+                                    <th>Contract</th>
+                                    <th>Parties</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="disputes-table-body">
+                                <!-- Disputes will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Tab -->
+            <div class="tab-content" id="users">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <button class="btn btn-primary" id="add-user-tab-btn">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                    <div class="tabs">
+                        <div class="tab active" data-user-tab="all-users">All Users</div>
+                        <div class="tab" data-user-tab="banned-users">Banned Users</div>
+                        <div class="tab" data-user-tab="restricted-users">Restricted Users</div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>IP Address</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-detail-table-body">
+                                <!-- Users will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contracts Tab -->
+            <div class="tab-content" id="contracts">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Contract Management</h3>
+                        <button class="btn btn-primary" id="add-contract-tab-btn">
+                            <i class="fas fa-plus"></i> Add Contract
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Contract ID</th>
+                                    <th>Title</th>
+                                    <th>Parties</th>
+                                    <th>Value</th>
+                                    <th>Escrow Fee</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contracts-detail-table-body">
+                                <!-- Contracts will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payments Tab -->
+            <div class="tab-content" id="payments">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Payment Management</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>Contract</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-table-body">
+                                <!-- Payments will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Disputes Tab -->
+            <div class="tab-content" id="disputes">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Dispute Management</h3>
+                        <button class="btn btn-primary" id="add-dispute-tab-btn">
+                            <i class="fas fa-plus"></i> New Dispute
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dispute ID</th>
+                                    <th>Contract</th>
+                                    <th>Parties</th>
+                                    <th>Reason</th>
+                                    <th>Reported By</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="disputes-detail-table-body">
+                                <!-- Disputes will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Platform Analytics</h3>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: rgba(67, 97, 238, 0.1); color: var(--primary);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>24.5%</h3>
+                                <p>Growth Rate</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: rgba(76, 201, 240, 0.1); color: var(--success);">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>$12,450</h3>
+                                <p>Monthly Revenue</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: rgba(248, 149, 30, 0.1); color: var(--warning);">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>187</h3>
+                                <p>New Users (30 days)</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: rgba(247, 37, 133, 0.1); color: var(--danger);">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>89</h3>
+                                <p>New Contracts (30 days)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 20px; margin-top: 30px;">
+                        <div style="flex: 1; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h4 style="margin-bottom: 15px;">Revenue Trends</h4>
+                            <div style="height: 200px; background: linear-gradient(180deg, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0.3) 100%); border-radius: 8px; display: flex; align-items: flex-end; justify-content: space-around; padding: 10px;">
+                                <div style="width: 30px; background: var(--primary); height: 70%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--primary); height: 85%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--primary); height: 60%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--primary); height: 95%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--primary); height: 75%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--primary); height: 80%; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h4 style="margin-bottom: 15px;">User Activity</h4>
+                            <div style="height: 200px; background: linear-gradient(180deg, rgba(76, 201, 240, 0.1) 0%, rgba(76, 201, 240, 0.3) 100%); border-radius: 8px; display: flex; align-items: flex-end; justify-content: space-around; padding: 10px;">
+                                <div style="width: 30px; background: var(--success); height: 65%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--success); height: 80%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--success); height: 50%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--success); height: 90%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--success); height: 70%; border-radius: 4px;"></div>
+                                <div style="width: 30px; background: var(--success); height: 85%; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Platform Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="platform-name">Platform Name</label>
+                        <input type="text" id="platform-name" class="form-control" value="RYB Platform">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-email">Admin Email</label>
+                        <input type="email" id="admin-email" class="form-control" value="admin@rybplatform.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="escrow-fee">Escrow Fee ($)</label>
+                        <input type="number" id="escrow-fee" class="form-control" value="250">
+                    </div>
+                    <div class="form-group">
+                        <label for="boost-fee">Boost Post Fee ($)</label>
+                        <input type="number" id="boost-fee" class="form-control" value="21">
+                    </div>
+                    <div class="form-group">
+                        <label for="renewal-fee">Renewal Fee ($)</label>
+                        <input type="number" id="renewal-fee" class="form-control" value="40">
+                    </div>
+                    <button class="btn btn-primary">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Button -->
+    <div class="report-btn" id="report-btn">
+        <i class="fas fa-flag"></i>
+    </div>
+    
+    <!-- Add Contract Modal -->
+    <div class="modal" id="add-contract-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Contract</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="contract-form">
+                <div class="form-group">
+                    <label for="contract-title">Contract Title</label>
+                    <input type="text" id="contract-title" class="form-control" placeholder="Enter contract title" required>
+                </div>
+                <div class="form-group">
+                    <label for="contract-parties">Parties Involved</label>
+                    <input type="text" id="contract-parties" class="form-control" placeholder="Company A → Company B" required>
+                </div>
+                <div class="form-group">
+                    <label for="contract-value">Contract Value ($)</label>
+                    <input type="number" id="contract-value" class="form-control" placeholder="5000" required>
+                </div>
+                <div class="form-group">
+                    <label for="contract-desc">Description</label>
+                    <textarea id="contract-desc" class="form-control" rows="3" placeholder="Enter contract description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contract-status">Status</label>
+                    <select id="contract-status" class="form-control">
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="disputed">Disputed</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Contract</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div class="modal" id="add-user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="user-form">
+                <div class="form-group">
+                    <label for="user-name">Full Name</label>
+                    <input type="text" id="user-name" class="form-control" placeholder="Enter user's full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">Email Address</label>
+                    <input type="email" id="user-email" class="form-control" placeholder="Enter user's email" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-company">Company</label>
+                    <input type="text" id="user-company" class="form-control" placeholder="Enter company name">
+                </div>
+                <div class="form-group">
+                    <label for="user-role">Role</label>
+                    <select id="user-role" class="form-control">
+                        <option value="client">Client</option>
+                        <option value="contractor">Contractor</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add User</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Dispute Modal -->
+    <div class="modal" id="add-dispute-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Report New Dispute</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="dispute-form">
+                <div class="form-group">
+                    <label for="dispute-contract">Contract</label>
+                    <select id="dispute-contract" class="form-control" required>
+                        <option value="">Select a contract</option>
+                        <option value="CT-1001">CT-1001: Website Development</option>
+                        <option value="CT-1002">CT-1002: Marketing Campaign</option>
+                        <option value="CT-1003">CT-1003: Software Integration</option>
+                        <option value="CT-1004">CT-1004: Content Creation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dispute-reason">Reason for Dispute</label>
+                    <select id="dispute-reason" class="form-control" required>
+                        <option value="">Select a reason</option>
+                        <option value="delayed-delivery">Delayed Delivery</option>
+                        <option value="quality-issues">Quality Issues</option>
+                        <option value="payment-dispute">Payment Dispute</option>
+                        <option value="scope-changes">Scope Changes</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dispute-details">Details</label>
+                    <textarea id="dispute-details" class="form-control" rows="4" placeholder="Provide details about the dispute" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Report Dispute</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Report Contract Modal -->
+    <div class="modal" id="report-contract-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Report Contract</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="report-form">
+                <div class="form-group">
+                    <label for="report-contract">Contract</label>
+                    <select id="report-contract" class="form-control" required>
+                        <option value="">Select a contract</option>
+                        <option value="CT-1001">CT-1001: Website Development</option>
+                        <option value="CT-1002">CT-1002: Marketing Campaign</option>
+                        <option value="CT-1003">CT-1003: Software Integration</option>
+                        <option value="CT-1004">CT-1004: Content Creation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="report-reason">Reason for Report</label>
+                    <select id="report-reason" class="form-control" required>
+                        <option value="">Select a reason</option>
+                        <option value="inappropriate-content">Inappropriate Content</option>
+                        <option value="fraudulent-activity">Fraudulent Activity</option>
+                        <option value="misrepresentation">Misrepresentation</option>
+                        <option value="spam">Spam</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="report-details">Details</label>
+                    <textarea id="report-details" class="form-control" rows="4" placeholder="Provide details about your report" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Report</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for the platform
+        const sampleContracts = [
+            { id: 'CT-1001', title: 'Website Development', parties: 'TechCorp → DesignStudio', value: 5000, status: 'active', escrowFee: 250 },
+            { id: 'CT-1002', title: 'Marketing Campaign', parties: 'RetailBrand → AdAgency', value: 12000, status: 'pending', escrowFee: 250 },
+            { id: 'CT-1003', title: 'Software Integration', parties: 'FinanceCorp → DevTeam', value: 8500, status: 'disputed', escrowFee: 250 },
+            { id: 'CT-1004', title: 'Content Creation', parties: 'MediaHouse → WritersCo', value: 3200, status: 'completed', escrowFee: 250 },
+            { id: 'CT-1005', title: 'Mobile App Development', parties: 'StartupXYZ → AppDevCo', value: 15000, status: 'active', escrowFee: 250 }
+        ];
+
+        const sampleUsers = [
+            { id: 'U-1001', name: 'Sarah Johnson', email: 'sarah@techcorp.com', status: 'active', joinDate: '2023-05-12', ip: '192.168.1.101' },
+            { id: 'U-1002', name: 'Michael Chen', email: 'michael@designstudio.com', status: 'active', joinDate: '2023-06-18', ip: '192.168.1.102' },
+            { id: 'U-1003', name: 'Emma Wilson', email: 'emma@retailbrand.com', status: 'restricted', joinDate: '2023-07-05', ip: '192.168.1.103' },
+            { id: 'U-1004', name: 'David Brown', email: 'david@financecorp.com', status: 'active', joinDate: '2023-08-22', ip: '192.168.1.104' },
+            { id: 'U-1005', name: 'Lisa Rodriguez', email: 'lisa@adagency.com', status: 'banned', joinDate: '2023-09-10', ip: '192.168.1.105' }
+        ];
+
+        const sampleDisputes = [
+            { id: 'DP-1001', contract: 'CT-1003', parties: 'FinanceCorp vs DevTeam', reason: 'Delayed delivery', reportedBy: 'FinanceCorp', status: 'under-review' },
+            { id: 'DP-1002', contract: 'CT-1005', parties: 'MediaHouse vs ContentCo', reason: 'Quality issues', reportedBy: 'MediaHouse', status: 'under-review' }
+        ];
+
+        const samplePayments = [
+            { id: 'PAY-1001', contract: 'CT-1001', amount: 5000, type: 'Escrow', status: 'completed', date: '2023-10-15' },
+            { id: 'PAY-1002', contract: 'CT-1002', amount: 12000, type: 'Escrow', status: 'pending', date: '2023-10-18' },
+            { id: 'PAY-1003', contract: 'CT-1004', amount: 3200, type: 'Escrow', status: 'completed', date: '2023-10-20' },
+            { id: 'PAY-1004', contract: 'CT-1001', amount: 21, type: 'Boost', status: 'completed', date: '2023-10-22' },
+            { id: 'PAY-1005', contract: 'CT-1005', amount: 40, type: 'Renewal', status: 'pending', date: '2023-10-25' }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate tables with sample data
+            populateContractsTable();
+            populateUsersTable();
+            populateDisputesTable();
+            populatePaymentsTable();
+            populateUsersDetailTable();
+            populateContractsDetailTable();
+            populateDisputesDetailTable();
+
+            // Set up event listeners
+            setupEventListeners();
+        });
+
+        // Function to populate contracts table
+        function populateContractsTable() {
+            const tableBody = document.getElementById('contracts-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleContracts.forEach(contract => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${contract.id}</td>
+                    <td>${contract.title}</td>
+                    <td>${contract.parties}</td>
+                    <td>$${contract.value.toLocaleString()}</td>
+                    <td><span class="status ${contract.status}">${getStatusText(contract.status)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Edit" data-id="${contract.id}">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="action-btn delete-btn" title="Delete" data-id="${contract.id}">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate users table
+        function populateUsersTable() {
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${user.status}">${getStatusText(user.status)}</span></td>
+                    <td>${user.joinDate}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Edit" data-id="${user.id}">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="action-btn ${user.status === 'active' ? 'ban-btn' : 'edit-btn'}" title="${user.status === 'active' ? 'Ban User' : 'Unban User'}" data-id="${user.id}">
+                                <i class="fas ${user.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate disputes table
+        function populateDisputesTable() {
+            const tableBody = document.getElementById('disputes-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleDisputes.forEach(dispute => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dispute.id}</td>
+                    <td>${dispute.contract}</td>
+                    <td>${dispute.parties}</td>
+                    <td>${dispute.reason}</td>
+                    <td><span class="status ${dispute.status}">${getStatusText(dispute.status)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Review" data-id="${dispute.id}">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="action-btn ban-btn" title="Resolve" data-id="${dispute.id}">
+                                <i class="fas fa-gavel"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate payments table
+        function populatePaymentsTable() {
+            const tableBody = document.getElementById('payments-table-body');
+            tableBody.innerHTML = '';
+            
+            samplePayments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${payment.id}</td>
+                    <td>${payment.contract}</td>
+                    <td>$${payment.amount.toLocaleString()}</td>
+                    <td>${payment.type}</td>
+                    <td><span class="status ${payment.status}">${getStatusText(payment.status)}</span></td>
+                    <td>${payment.date}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="View Details" data-id="${payment.id}">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate users detail table
+        function populateUsersDetailTable() {
+            const tableBody = document.getElementById('users-detail-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${user.status}">${getStatusText(user.status)}</span></td>
+                    <td>${user.joinDate}</td>
+                    <td>${user.ip}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Edit" data-id="${user.id}">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="action-btn ${user.status === 'active' ? 'ban-btn' : 'edit-btn'}" title="${user.status === 'active' ? 'Ban User' : 'Unban User'}" data-id="${user.id}">
+                                <i class="fas ${user.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+                            </div>
+                            <div class="action-btn delete-btn" title="Delete" data-id="${user.id}">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate contracts detail table
+        function populateContractsDetailTable() {
+            const tableBody = document.getElementById('contracts-detail-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleContracts.forEach(contract => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${contract.id}</td>
+                    <td>${contract.title}</td>
+                    <td>${contract.parties}</td>
+                    <td>$${contract.value.toLocaleString()}</td>
+                    <td>$${contract.escrowFee}</td>
+                    <td><span class="status ${contract.status}">${getStatusText(contract.status)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Edit" data-id="${contract.id}">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="action-btn delete-btn" title="Delete" data-id="${contract.id}">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                            <div class="action-btn ban-btn" title="Report" data-id="${contract.id}">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to populate disputes detail table
+        function populateDisputesDetailTable() {
+            const tableBody = document.getElementById('disputes-detail-table-body');
+            tableBody.innerHTML = '';
+            
+            sampleDisputes.forEach(dispute => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dispute.id}</td>
+                    <td>${dispute.contract}</td>
+                    <td>${dispute.parties}</td>
+                    <td>${dispute.reason}</td>
+                    <td>${dispute.reportedBy}</td>
+                    <td><span class="status ${dispute.status}">${getStatusText(dispute.status)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <div class="action-btn edit-btn" title="Review" data-id="${dispute.id}">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="action-btn ban-btn" title="Resolve" data-id="${dispute.id}">
+                                <i class="fas fa-gavel"></i>
+                            </div>
+                            <div class="action-btn delete-btn" title="Dismiss" data-id="${dispute.id}">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to get status text
+        function getStatusText(status) {
+            const statusMap = {
+                'active': 'Active',
+                'pending': 'Pending',
+                'disputed': 'Under Review',
+                'completed': 'Completed',
+                'restricted': 'Restricted',
+                'banned': 'Banned',
+                'under-review': 'Under Review'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Function to set up event listeners
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tab = this.getAttribute('data-tab');
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update active tab content
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(tab).classList.add('active');
+                    
+                    // Update page title
+                    document.getElementById('page-title').textContent = this.textContent.trim();
+                });
+            });
+
+            // User tabs
+            document.querySelectorAll('[data-user-tab]').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('[data-user-tab]').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real app, we would filter the users table based on the selected tab
+                    // For this prototype, we'll just show a message
+                    const userTab = this.getAttribute('data-user-tab');
+                    alert(`Filtering users by: ${userTab.replace('-', ' ')}`);
+                });
+            });
+
+            // Modal functionality
+            const addContractBtn = document.getElementById('add-contract-btn');
+            const addContractTabBtn = document.getElementById('add-contract-tab-btn');
+            const addContractModal = document.getElementById('add-contract-modal');
+            
+            const addUserBtn = document.getElementById('add-user-btn');
+            const addUserTabBtn = document.getElementById('add-user-tab-btn');
+            const addUserModal = document.getElementById('add-user-modal');
+            
+            const addDisputeBtn = document.getElementById('add-dispute-btn');
+            const addDisputeTabBtn = document.getElementById('add-dispute-tab-btn');
+            const addDisputeModal = document.getElementById('add-dispute-modal');
+            
+            const reportBtn = document.getElementById('report-btn');
+            const reportContractModal = document.getElementById('report-contract-modal');
+            
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+            
+            // Open modals
+            addContractBtn.addEventListener('click', () => addContractModal.style.display = 'flex');
+            addContractTabBtn.addEventListener('click', () => addContractModal.style.display = 'flex');
+            
+            addUserBtn.addEventListener('click', () => addUserModal.style.display = 'flex');
+            addUserTabBtn.addEventListener('click', () => addUserModal.style.display = 'flex');
+            
+            addDisputeBtn.addEventListener('click', () => addDisputeModal.style.display = 'flex');
+            addDisputeTabBtn.addEventListener('click', () => addDisputeModal.style.display = 'flex');
+            
+            reportBtn.addEventListener('click', () => reportContractModal.style.display = 'flex');
+            
+            // Close modals
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+            
+            // Form submissions
+            document.getElementById('contract-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Contract added successfully!');
+                addContractModal.style.display = 'none';
+                this.reset();
+            });
+            
+            document.getElementById('user-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('User added successfully!');
+                addUserModal.style.display = 'none';
+                this.reset();
+            });
+            
+            document.getElementById('dispute-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Dispute reported successfully!');
+                addDisputeModal.style.display = 'none';
+                this.reset();
+            });
+            
+            document.getElementById('report-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Contract reported successfully! Our team will review it shortly.');
+                reportContractModal.style.display = 'none';
+                this.reset();
+            });
+            
+            // AI Search functionality
+            const aiSearchBtn = document.getElementById('ai-search-btn');
+            const aiSearchInput = document.getElementById('ai-search-input');
+            const aiResult = document.getElementById('ai-result');
+            
+            aiSearchBtn.addEventListener('click', () => {
+                const searchTerm = aiSearchInput.value.trim();
+                if (searchTerm) {
+                    // Simulate AI processing
+                    aiResult.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Analyzing data with AI...</p>';
+                    
+                    setTimeout(() => {
+                        const companies = [
+                            { name: "TechCorp", summary: "Leading technology solutions provider with focus on enterprise software. Strong growth trajectory with 25% YoY revenue increase.", visibility: "High", competitors: "SoftSolutions, ITGlobal" },
+                            { name: "DesignStudio", summary: "Creative agency specializing in UI/UX design and branding. Recently expanded to offer development services.", visibility: "Medium", competitors: "CreativeMind, PixelPerfect" },
+                            { name: "RetailBrand", summary: "E-commerce retailer with physical store presence. Strong social media engagement but limited digital marketing.", visibility: "Medium", competitors: "ShopEasy, MarketPlace" }
+                        ];
+                        
+                        const randomCompany = companies[Math.floor(Math.random() * companies.length)];
+                        
+                        aiResult.innerHTML = `
+                            <h4>AI Analysis for "${searchTerm}"</h4>
+                            <p><strong>Company:</strong> ${randomCompany.name}</p>
+                            <p><strong>Summary:</strong> ${randomCompany.summary}</p>
+                            <p><strong>Visibility Score:</strong> ${randomCompany.visibility}</p>
+                            <p><strong>Key Competitors:</strong> ${randomCompany.competitors}</p>
+                            <p><strong>AI Suggestions:</strong> Consider boosting contract posts during peak engagement hours (2-5 PM EST) and utilize our escrow protection for higher-value contracts to build trust.</p>
+                        `;
+                    }, 1500);
+                } else {
+                    aiResult.innerHTML = '<p>Please enter a search term to get AI-powered insights.</p>';
+                }
+            });
+            
+            // Action buttons functionality
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.action-btn')) {
+                    const actionBtn = e.target.closest('.action-btn');
+                    const action = actionBtn.title;
+                    const row = actionBtn.closest('tr');
+                    const id = row.cells[0].textContent;
+                    
+                    if (action === 'Edit') {
+                        alert(`Editing ${id}`);
+                    } else if (action === 'Delete') {
+                        if (confirm(`Are you sure you want to delete ${id}?`)) {
+                            row.remove();
+                        }
+                    } else if (action === 'Ban User' || action === 'Unban User') {
+                        const statusCell = row.cells[3];
+                        if (action === 'Ban User') {
+                            statusCell.innerHTML = '<span class="status banned">Banned</span>';
+                            actionBtn.title = 'Unban User';
+                            actionBtn.innerHTML = '<i class="fas fa-check"></i>';
+                            actionBtn.classList.remove('ban-btn');
+                            actionBtn.classList.add('edit-btn');
+                        } else {
+                            statusCell.innerHTML = '<span class="status active">Active</span>';
+                            actionBtn.title = 'Ban User';
+                            actionBtn.innerHTML = '<i class="fas fa-ban"></i>';
+                            actionBtn.classList.remove('edit-btn');
+                            actionBtn.classList.add('ban-btn');
+                        }
+                    } else if (action === 'Resolve Dispute' || action === 'Resolve') {
+                        const statusCell = row.cells[4] || row.cells[5];
+                        statusCell.innerHTML = '<span class="status completed">Resolved</span>';
+                        alert(`Dispute ${id} has been resolved.`);
+                    } else if (action === 'Review') {
+                        alert(`Reviewing details for ${id}`);
+                    } else if (action === 'Report') {
+                        reportContractModal.style.display = 'flex';
+                    } else if (action === 'Dismiss') {
+                        if (confirm(`Are you sure you want to dismiss ${id}?`)) {
+                            row.remove();
+                        }
+                    } else if (action === 'View Details') {
+                        alert(`Viewing payment details for ${id}`);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
